@@ -1,30 +1,22 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
+from models import Nums
+from service import add_nums, multiply_nums
 
 app = FastAPI()
 
-@app.get("/")
-def sayhello():
-    return {"message" : "Hello, World!"}
-
-
-# greeting  endpoint (query parameter)
-@app.get("/greet")
-def greetings(name:str):
-    return {"message": f"hello {name} nice to meet you 🤝"}
+# health check endpoint 
+@app.get("/health")
+def health():
+    return {"Status" : "API running..."}
 
 # add endpoint (multi query parameters)
-@app.get("/add")
-def add_nums(a:float, b:float):
-    result = a + b
-    return {"Response" : f"Sum of a:{a} and b:{b} is equals to: {result}"}
+@app.post("/add")
+def addition(nums:Nums):
+    result = add_nums(nums.a, nums.b)
+    return {"Response" : f"Sum of a:{nums.a} and b:{nums.b} is equals to: {result}"}
 
 # add a post enpoint 
-class Nums(BaseModel):
-    a:float
-    b:float
-
-@app.post("/add-json")
-def multiply_json(numbers: Nums):
-    result = numbers.a * numbers.b
-    return {"result": result}
+@app.post("/multiply")
+def multiplication(nums:Nums):
+    result  =   multiply_nums(nums.a, nums.b)
+    return {"Result": result}
